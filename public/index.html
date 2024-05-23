@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор квадрата числа</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Калькулятор квадрата числа</h1>
+    <form id="square-form">
+        <label for="number">Введіть число:</label>
+        <input type="number" id="number" required>
+        <button type="submit">Обчислити</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('square-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const number = document.getElementById('number').value;
+            const resultDiv = document.getElementById('result');
+
+            fetch('/calculate-square', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ number })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    resultDiv.innerHTML = `<p style="color: red;">${data.error}</p>`;
+                } else {
+                    resultDiv.innerHTML = `<p>Квадрат числа ${number} дорівнює ${data.square}</p>`;
+                }
+            })
+            .catch(error => {
+                resultDiv.innerHTML = `<p style="color: red;">Виникла помилка: ${error.message}</p>`;
+            });
+        });
+    </script>
+</body>
+</html>
